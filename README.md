@@ -153,7 +153,7 @@ VITE_API_BASE_URL=http://localhost:8000
 -  Rotate leaked tokens immediately
 -  GITHUB_TOKEN=YOUR_TOKEN_HERE
 
-# Admin (Basic Auth)
+#### Admin (Basic Auth)
 ADMIN_USER=admin
 ADMIN_PASS=admin123
 
