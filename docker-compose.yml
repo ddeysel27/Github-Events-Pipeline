@@ -1,0 +1,55 @@
+version: "3.9"
+
+services:
+  db:
+    image: postgres:15
+    container_name: github_db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: github_events
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./db/schema.sql:/docker-entrypoint-initdb.d/schema.sql
+
+  # Overrides DB_HOST to db
+  # Runs ingestion every 5 minutes
+  ingestor:
+    image: python:3.12-slim
+    working_dir: /app
+    volumes:
+      - ./:/app
+    env_file:
+      - .env
+    environment:
+      DB_HOST: db
+    command: >
+      bash -lc "pip install --no-cache-dir -r requirements.txt
+      && while true; do
+          python app/ingestor/ingest.py;
+          sleep 300;
+        done"
+    depends_on:
+      - db
+
+
+  api:
+    image: python:3.12-slim
+    container_name: github_api
+    working_dir: /app
+    volumes:
+      - ./:/app
+    env_file:
+      - .env
+    ports:
+      - "8000:8000"
+    command: >
+      bash -lc "pip install --no-cache-dir -r requirements.txt
+      && uvicorn app.api.main:app --host 0.0.0.0 --port 8000 --reload"
+    depends_on:
+      - db
+
+volumes:
+  pgdata:

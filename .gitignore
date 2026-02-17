@@ -1,0 +1,21 @@
+# env
+.env
+*.env
+
+# python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# logs
+*.log
+
+# OS
+.DS_Store
+
+# editor
+.vscode/
+
+# docker
+pgdata/
