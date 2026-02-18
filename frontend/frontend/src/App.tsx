@@ -184,9 +184,35 @@ function ChartBar({ data, xKey, yKey }: { data: any[]; xKey: string; yKey: strin
       <ResponsiveContainer>
         <BarChart data={data}>
           <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey={xKey} tick={{ fontSize: 12 }} />
+          <XAxis dataKey={xKey} hide />
           <YAxis />
-          <Tooltip />
+          <Tooltip
+            cursor={{ fill: "rgba(255,255,255,0.08)" }}
+            content={({ active, payload }) => {
+              if (!active || !payload || payload.length === 0) return null;
+
+              const row = payload[0].payload as any;     // full data row for that bar
+              const name = row?.[xKey];
+              const value = payload[0].value;
+
+              return (
+              <div
+                style={{
+                  background: "#fff",
+                  color: "#111",          // <-- FIX
+                  padding: 10,
+                  border: "1px solid #ddd",
+                  fontSize: 12,
+                }}
+              >
+                <div style={{ fontWeight: 700, marginBottom: 6 }}>{String(name)}</div>
+                <div>{`${yKey}: ${value}`}</div>
+              </div>
+            );
+
+            }}
+          />
+
           <Bar dataKey={yKey} />
         </BarChart>
       </ResponsiveContainer>
